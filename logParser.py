@@ -1,3 +1,6 @@
+import requests
+import zipfile
+import os
 
 def roundWins(filePath):
     redRounds = 0
@@ -21,3 +24,23 @@ def roundWins(filePath):
     else:
         print("tie")
 
+def getLog(logNumber):
+    logUrl = f"https://logs.tf/logs/log_{logNumber}.log.zip"
+    zipName = f"log_{logNumber}.log.zip"
+    logFile = f"log_{logNumber}.log"
+
+    response = requests.get(logUrl)
+    if response.status_code != 200:
+        print("Failed to download the log file. Check the log number.")
+        return
+
+    with open(zipName, 'wb') as f:
+        f.write(response.content)
+
+    with zipfile.ZipFile(zipName, 'r') as zipRef:
+        zipRef.extractall()
+
+    roundWins(logFile)
+
+    os.remove(zipName)
+    os.remove(logFile)
