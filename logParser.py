@@ -24,6 +24,28 @@ def roundWins(filePath):
     else:
         print("tie")
 
+
+def midfightWins(filePath):
+    midfightResults = []
+    trackingMid = False
+
+    with open(filePath, 'r', encoding='utf-8', errors='ignore') as file:
+        for line in file:
+            if 'World triggered "Round_Start"' in line:
+                trackingMid = True
+            elif trackingMid and 'triggered "pointcaptured"' in line and '(cp "2")' in line:
+                if 'Team "Red"' in line:
+                    midfightResults.append("Red")
+                elif 'Team "Blue"' in line:
+                    midfightResults.append("Blue")
+                trackingMid = False
+
+    redMids = midfightResults.count("Red")
+    blueMids = midfightResults.count("Blue")
+
+    print(f"Red won {redMids} midfight(s)")
+    print(f"Blue won {blueMids} midfight(s)")
+
 def getLog(logNumber):
     logUrl = f"https://logs.tf/logs/log_{logNumber}.log.zip"
     zipName = f"log_{logNumber}.log.zip"
@@ -40,6 +62,7 @@ def getLog(logNumber):
     with zipfile.ZipFile(zipName, 'r') as zipRef:
         zipRef.extractall()
 
+    midfightWins(logFile)
     roundWins(logFile)
 
     os.remove(zipName)
