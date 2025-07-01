@@ -1,6 +1,8 @@
 # open powershell
 pip install -r requirements.txt
+
 pip install tabulate
+
 # usage: in shell type...
 python 
 >>> from logParserv2 import getLog
